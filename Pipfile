@@ -1,0 +1,23 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+pandas = "*"
+matplotlib = "*"
+requests = "*"
+sklearn = "*"
+seaborn = "*"
+statsmodels = "*"
+pmdarima = "*"
+convertdate = "*"
+pystan = "==2.18.0.0"
+fbprophet = "*"
+plotly = "*"
+alpha-vantage = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.8"
