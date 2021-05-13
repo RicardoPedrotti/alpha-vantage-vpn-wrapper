@@ -1,101 +1,68 @@
+import logging
+import concurrent.futures
+from io import StringIO
+from itertools import repeat
+from typing import List
+
+import yaml
 import requests
 import pandas as pd
 import random
 
 
 class AlphaData:
-    def __init__(self,
-                 api_keys_csv='config/API_KEYS.csv'):
-        self.API_KEYS_LIST = list(pd.read_csv(api_keys_csv)['API_KEYS'])
+    def __init__(self, config_file_path="config.yml"):
+        self.configs = config = yaml.safe_load(open(config_file_path))
+        self.api_keys = config.get("alpha_vantage_api_key_list")
+        self.proxies = config.get("vpn_proxies")
 
     def get_random_api_key(self):
-        return self.API_KEYS_LIST[random.randrange(len(self.API_KEYS_LIST))]
+        api_key = self.api_keys[random.randrange(len(self.api_keys))]
+        logging.info(f'Using API Key {api_key}')
+        return api_key
 
-
-    def alpha_to_pandas(self, symbol, endpoint, interval='15min', outputsize='full'):
-        # ts = TimeSeries(key=get_random_api_key(), output_format='pandas')
-        call_start = 'https://www.alphavantage.co/query?function='
-        key = self.get_random_api_key()
-
-        if endpoint == 'TIME_SERIES_INTRADAY':
-            call = call_start + '{}&symbol={}&interval={}&outputsize={}&apikey={}'.format(endpoint, symbol, interval,
-                                                                                          outputsize, key)
-            print('Calling... ' + call)
-            r = requests.get(call)
-            r_json = r.json()
-            metadata = r_json["Meta Data"]
-            data = pd.DataFrame(r_json["Time Series ({})".format(interval)]).T
-            # data = ts.get_intraday(symbol, interval, outputsize)
-
-        elif endpoint == 'TIME_SERIES_DAILY':
-            call = call_start + '{}&symbol={}&outputsize={}&apikey={}'.format(endpoint, symbol, outputsize, key)
-            print('Calling... ' + call)
-            r = requests.get(call)
-            r_json = r.json()
-            metadata = r_json["Meta Data"]
-            data = pd.DataFrame(r_json["Time Series ({})".format(interval)]).T
-            # data = ts.get_daily(symbol, outputsize)
-
-        elif endpoint == 'TIME_SERIES_DAILY_ADJUSTED':
-            call = call_start + '{}&symbol={}&outputsize={}&apikey={}'.format(endpoint, symbol, outputsize, key)
-            print('Calling... ' + call)
-            r = requests.get(call)
-            r_json = r.json()
-            metadata = r_json["Meta Data"]
-            data = pd.DataFrame(r_json['Time Series (Daily)']).T
-            # data = ts.get_daily_adjusted(symbol, outputsize)
-
-        elif endpoint == 'TIME_SERIES_WEEKLY':
-            call = call_start + '{}&symbol={}&outputsize={}&apikey={}'.format(endpoint, symbol, key)
-            print('Calling... ' + call)
-            r = requests.get(call)
-            r_json = r.json()
-            metadata = r_json["Meta Data"]
-            data = pd.DataFrame(r_json["Time Series ({})".format(interval)]).T
-            # data = ts.get_weekly(symbol)
-
-        elif endpoint == 'TIME_SERIES_WEEKLY_ADJUSTED':
-            call = call_start + '{}&symbol={}&apikey={}'.format(endpoint, symbol, key)
-            print('Calling... ' + call)
-            r = requests.get(call)
-            r_json = r.json()
-            metadata = r_json["Meta Data"]
-            data = pd.DataFrame(r_json["Time Series ({})".format(interval)]).T
-            # data = ts.get_weekly_adjusted(symbol)
-
-        elif endpoint == 'TIME_SERIES_MONTHLY':
-            call = call_start + '{}&symbol={}&apikey={}'.format(endpoint, symbol, key)
-            print('Calling... ' + call)
-            r = requests.get(call)
-            r_json = r.json()
-            metadata = r_json["Meta Data"]
-            data = pd.DataFrame(r_json["Time Series ({})".format(interval)]).T
-            # data = ts.get_monthly(symbol)
-
-        elif endpoint == 'TIME_SERIES_MONTHLY_ADJUSTED':
-            call = call_start + '{}&symbol={}&apikey={}'.format(endpoint, symbol, key)
-            print('Calling... ' + call)
-            r = requests.get(call)
-            r_json = r.json()
-            metadata = r_json["Meta Data"]
-            data = pd.DataFrame(r_json["Time Series ({})".format(interval)]).T
-            # data = ts.get_monthly_adjusted(symbol)
-
-        elif endpoint == 'QUOTE_ENDPOINT':
-            call = call_start + 'GLOBAL_QUOTE&symbol={}&apikey={}'.format(symbol, key)
-            print('Calling... ' + call)
-            r = requests.get(call)
-            r_json = r.json()
-            metadata = r_json["Meta Data"]
-            data = pd.DataFrame(r_json["Time Series ({})".format(interval)]).T
-            # data = ts.get_quote_endpoint(symbol)
+    def get_call_api(self, url, use_vpn=False):
+        """
+        Calls a simple get api using proxies when applied
+        :param url: api url to call
+        :param use_vpn: Define whether the call should use the VPN or not
+        :return: api response
+        """
+        if use_vpn is True:
+            response = requests.request("GET", url, proxies=self.proxies)
         else:
-            return print(
-                '''The Endpoint {} does not exist! See 'Endpoint Cheat Sheet' for more information'''.format(endpoint))
+            response = requests.request("GET", url)
 
-        # data['1. open'] = data['1. open'].astype(float)
-        # data['2. high'] = data['2. high'].astype(float)
-        # data['3. low'] = data['3. low'].astype(float)
-        # data['4. close'] = data['4. close'].astype(float)
-        # data['5. volume'] = data['5. volume'].astype(int)
-        return data
+        if response.status_code == 200:
+            return response
+        else:
+            logging.error(
+                f"ERROR! Status code for the error: {str(response.status_code)}"
+                f"/n Message from Alpha Vantage: /n{str(response.text)}"
+            )
+
+    def futures_api_calls(self, request_list: List, use_vpn: bool):
+        """
+        Receives a list of API calls to request simultaneously using the number of cores in the computer minus one
+        and returns the api's responses
+        """
+        with concurrent.futures.ProcessPoolExecutor() as executor:
+            responses = executor.map(self.get_call_api, request_list, repeat(use_vpn))
+        return responses
+
+    @staticmethod
+    def response_csv_to_pandas_handling(response):
+        if response.status_code == 200:
+            pandas_df = pd.read_csv(StringIO(response.text))
+            if pandas_df.size > 3:
+                return pandas_df
+            else:
+                logging.error(
+                    f"Well, apparently the call {response.url} returned an empty Dataframe"
+                )
+                logging.error(
+                    f"Could be a bug, but first please check your arguments and try again. If exceeded the number of API calls, try using VPN."
+                    f" Below is the returned information from Alpha vantage: "
+                )
+                logging.error(response.text)
+                raise ValueError
