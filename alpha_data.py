@@ -1,3 +1,4 @@
+import json
 import logging
 import concurrent.futures
 from io import StringIO
@@ -67,3 +68,43 @@ class AlphaData:
                 )
                 logging.error(response.text)
                 raise ValueError
+
+    @staticmethod
+    def logging_info_start(
+            endpoint: str,
+            use_vpn: bool = False,
+            intervals: List = None,
+            additional_logging_on_start: str = "",
+    ):
+        logging.info(f"Starting API Interface with Endpoint: {endpoint}")
+        if use_vpn is True:
+            logging.info(
+                "Using VPN to call Alpha Vantage! Be aware that this is a 3rd party service which"
+                " can malfunction sometimes due to connection timeout. Pay attention to the errors"
+            )
+        else:
+            logging.info(
+                "Beware! Not using VPN to call Alpha Vantage! This way, even when using different API keys"
+                " they know who is sending the request! ;D"
+            )
+        if intervals is not None:
+            logging.info(
+                f"Optional intervals between the Data Points for this API are: {str(intervals)}."
+                f" If not set, uses standard value."
+            )
+        if additional_logging_on_start is not "":
+            logging.info(additional_logging_on_start)
+
+    def search_endpoint(self, what_to_search: str, use_vpn: bool = False):
+        endpoint = "SYMBOL_SEARCH"
+        self.logging_info_start(endpoint=endpoint)
+        call = f"{self.alpha_api_url}" \
+               f"function={endpoint}" \
+               f"&keywords={what_to_search.lower()}" \
+               f"&datatype=csv&apikey={self.get_random_api_key()}"
+        search_return_df = self.response_csv_to_pandas_handling(self.get_call_api(call, use_vpn=use_vpn))
+        print(f"{search_return_df.shape[0]} Results returned. Showing first records.")
+        print(search_return_df.head(10))
+
+
+
