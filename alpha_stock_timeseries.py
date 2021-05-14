@@ -119,3 +119,65 @@ class AlphaStockTimeSeries(AlphaData):
         return self.response_csv_to_pandas_handling(
             self.get_call_api(call, use_vpn=use_vpn)
         )
+
+    def df_time_series_weekly(
+        self,
+        ticker: str,
+        adjusted: bool = True,
+        use_vpn: bool = False,
+    ) -> pd.DataFrame:
+        if adjusted is True:
+            endpoint = "TIME_SERIES_WEEKLY_ADJUSTED"
+        else:
+            endpoint = "TIME_SERIES_WEEKLY"
+
+        self.logging_info_start(endpoint=endpoint)
+        call = (
+            self.api_mock_call.format(
+                endpoint=endpoint, ticker=ticker, api_key=self.get_random_api_key()
+            )
+            + f"&datatype=csv"
+        )
+        return self.response_csv_to_pandas_handling(
+            self.get_call_api(call, use_vpn=use_vpn)
+        )
+
+    def df_time_series_monthly(
+        self,
+        ticker: str,
+        adjusted: bool = True,
+        use_vpn: bool = False,
+    ) -> pd.DataFrame:
+        if adjusted is True:
+            endpoint = "TIME_SERIES_MONTHLY_ADJUSTED"
+        else:
+            endpoint = "TIME_SERIES_MONTHLY"
+
+        self.logging_info_start(endpoint=endpoint)
+        call = (
+            self.api_mock_call.format(
+                endpoint=endpoint, ticker=ticker, api_key=self.get_random_api_key()
+            )
+            + f"&datatype=csv"
+        )
+        return self.response_csv_to_pandas_handling(
+            self.get_call_api(call, use_vpn=use_vpn)
+        )
+
+    def df_quote_endpoint(
+        self,
+        ticker: str,
+        use_vpn: bool = False,
+    ) -> pd.DataFrame:
+        endpoint = "GLOBAL_QUOTE"
+
+        self.logging_info_start(endpoint=endpoint)
+        call = (
+            self.api_mock_call.format(
+                endpoint=endpoint, ticker=ticker, api_key=self.get_random_api_key()
+            )
+            + f"&datatype=csv"
+        )
+        return self.response_csv_to_pandas_handling(
+            self.get_call_api(call, use_vpn=use_vpn)
+        )
