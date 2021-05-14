@@ -12,6 +12,7 @@ import random
 
 class AlphaData:
     def __init__(self, config_file_path="config.yml"):
+        self.alpha_api_url = "https://www.alphavantage.co/query?"
         self.configs = config = yaml.safe_load(open(config_file_path))
         self.api_keys = config.get("alpha_vantage_api_key_list")
         self.proxies = config.get("vpn_proxies")
