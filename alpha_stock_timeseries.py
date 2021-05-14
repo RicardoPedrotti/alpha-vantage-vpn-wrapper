@@ -27,19 +27,30 @@ class AlphaStockTimeSeries(AlphaData):
         ]
 
     @staticmethod
-    def logging_info_start(endpoint: str, use_vpn: bool = False, intervals: List = None):
+    def logging_info_start(
+        endpoint: str,
+        use_vpn: bool = False,
+        intervals: List = None,
+        additional_logging_on_start: str = "",
+    ):
         logging.info(f"Starting API Interface with Endpoint: {endpoint}")
         if use_vpn is True:
-            logging.info('Using VPN to call Alpha Vantage! Be aware that this is a 3rd party service which'
-                         ' can malfunction sometimes due to connection timeout. Pay attention to the errors')
+            logging.info(
+                "Using VPN to call Alpha Vantage! Be aware that this is a 3rd party service which"
+                " can malfunction sometimes due to connection timeout. Pay attention to the errors"
+            )
         else:
-            logging.info('Beware! Not using VPN to call Alpha Vantage! This way, even when using different API keys'
-                         ' they know who is sending the request! ;D')
+            logging.info(
+                "Beware! Not using VPN to call Alpha Vantage! This way, even when using different API keys"
+                " they know who is sending the request! ;D"
+            )
         if intervals is not None:
             logging.info(
                 f"Optional intervals between the Data Points for this API are: {str(intervals)}."
                 f" If not set, uses standard value."
             )
+        if additional_logging_on_start is not "":
+            logging.info(additional_logging_on_start)
 
     def df_time_series_intraday(
         self,
