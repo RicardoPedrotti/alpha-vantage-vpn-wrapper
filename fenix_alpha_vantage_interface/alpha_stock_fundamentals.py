@@ -1,6 +1,6 @@
 import logging
 import pandas as pd
-from alpha_data import AlphaData
+from fenix_alpha_vantage_interface.alpha_data import AlphaData
 
 
 class AlphaStockFundamentals(AlphaData):
