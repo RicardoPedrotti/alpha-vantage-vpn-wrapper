@@ -14,7 +14,10 @@ import random
 class AlphaData:
     def __init__(self, config_file_path="fenix_alpha_vantage_interface/config.yml"):
         self.alpha_api_url = "https://www.alphavantage.co/query?"
-        self.configs = config = yaml.safe_load(open(config_file_path))
+        try:
+            self.configs = config = yaml.safe_load(open(config_file_path))
+        except FileNotFoundError:
+            self.configs = config = yaml.safe_load(open(f"../{config_file_path}"))
         self.api_keys = config.get("alpha_vantage_api_key_list")
         self.proxies = config.get("vpn_proxies")
 
