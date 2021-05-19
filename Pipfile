@@ -16,6 +16,7 @@ pystan = "==2.18.0.0"
 fbprophet = "*"
 plotly = "*"
 alpha-vantage = "*"
+notebook = "*"
 
 [dev-packages]
 
