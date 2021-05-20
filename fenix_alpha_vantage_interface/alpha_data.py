@@ -83,7 +83,7 @@ class AlphaData:
         if use_vpn is True:
             logging.info(
                 "Using VPN to call Alpha Vantage! Be aware that this is a 3rd party service which"
-                " can malfunction sometimes due to connection timeout. Pay attention to the errors"
+                " can malfunction sometimes due to connection timeout. If it does, try your command again."
             )
         else:
             logging.info(
