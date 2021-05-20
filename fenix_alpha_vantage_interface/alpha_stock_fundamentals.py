@@ -14,6 +14,26 @@ class AlphaStockFundamentals(AlphaData):
         )
 
     @staticmethod
+    def annual_quarterly_fundamentals_response_json_to_pandas_handling(api_response, suffix):
+        if api_response.status_code == 200:
+            pandas_df = pd.DataFrame.from_dict(api_response.json(), orient="index")
+            annual_reports_df = (
+                pd.DataFrame.from_dict(
+                    pandas_df.loc[f"annual{suffix}"][0][0], orient="index"
+                )
+            ).transpose()
+            quarterly_reports_df = (
+                pd.DataFrame.from_dict(
+                    pandas_df.loc[f"quarterly{suffix}"][0][0], orient="index"
+                )
+            ).transpose()
+            aggregated_df = pd.concat([annual_reports_df, quarterly_reports_df])
+            return aggregated_df
+        else:
+            logging.error(api_response.text)
+            raise ValueError
+
+    @staticmethod
     def fundamentals_response_json_to_pandas_handling(api_response):
         if api_response.status_code == 200:
             pandas_df = pd.DataFrame.from_dict(api_response.json(), orient="index")
@@ -23,65 +43,43 @@ class AlphaStockFundamentals(AlphaData):
             raise ValueError
 
     def fundamentals_api_call_general_flow(
-        self, endpoint: str, ticker: str, use_vpn: bool, print_return: bool
+        self, endpoint: str, ticker: str, use_vpn: bool, parse_annual_quarterly: bool, suffix='Reports'
     ) -> pd.DataFrame:
         self.logging_info_start(endpoint=endpoint)
         call = self.api_mock_call.format(
             endpoint=endpoint, ticker=ticker, api_key=self.get_random_api_key()
         )
-        response_dataframe = self.fundamentals_response_json_to_pandas_handling(
-            self.get_call_api(call, use_vpn=use_vpn)
-        )
-        if print_return is True:
-            print(response_dataframe)
+        if parse_annual_quarterly:
+            response_dataframe = self.annual_quarterly_fundamentals_response_json_to_pandas_handling(
+                self.get_call_api(call, use_vpn=use_vpn), suffix=suffix
+            )
+        else:
+            response_dataframe = self.fundamentals_response_json_to_pandas_handling(
+                self.get_call_api(call, use_vpn=use_vpn)
+            )
         return response_dataframe
 
-    def df_overview(
-        self, ticker: str, use_vpn: bool = False, print_return: bool = False
-    ) -> pd.DataFrame:
+    def df_overview(self, ticker: str, use_vpn: bool = False) -> pd.DataFrame:
         return self.fundamentals_api_call_general_flow(
-            endpoint="OVERVIEW",
-            ticker=ticker,
-            use_vpn=use_vpn,
-            print_return=print_return,
+            endpoint="OVERVIEW", ticker=ticker, use_vpn=use_vpn, parse_annual_quarterly=False
+        ).transpose()
+
+    def df_earnings(self, ticker: str, use_vpn: bool = False) -> pd.DataFrame:
+        return self.fundamentals_api_call_general_flow(
+            endpoint="EARNINGS", ticker=ticker, use_vpn=use_vpn, parse_annual_quarterly=True, suffix="Earnings"
         )
 
-    def df_earnings(
-        self, ticker: str, use_vpn: bool = False, print_return: bool = False
-    ) -> pd.DataFrame:
+    def df_income_statement(self, ticker: str, use_vpn: bool = False) -> pd.DataFrame:
         return self.fundamentals_api_call_general_flow(
-            endpoint="EARNINGS",
-            ticker=ticker,
-            use_vpn=use_vpn,
-            print_return=print_return,
+            endpoint="INCOME_STATEMENT", ticker=ticker, use_vpn=use_vpn, parse_annual_quarterly=True
         )
 
-    def df_income_statement(
-        self, ticker: str, use_vpn: bool = False, print_return: bool = False
-    ) -> pd.DataFrame:
+    def df_balance_sheet(self, ticker: str, use_vpn: bool = False) -> pd.DataFrame:
         return self.fundamentals_api_call_general_flow(
-            endpoint="INCOME_STATEMENT",
-            ticker=ticker,
-            use_vpn=use_vpn,
-            print_return=print_return,
+            endpoint="BALANCE_SHEET", ticker=ticker, use_vpn=use_vpn, parse_annual_quarterly=True
         )
 
-    def df_balance_sheet(
-        self, ticker: str, use_vpn: bool = False, print_return: bool = False
-    ) -> pd.DataFrame:
+    def df_cash_flow(self, ticker: str, use_vpn: bool = False) -> pd.DataFrame:
         return self.fundamentals_api_call_general_flow(
-            endpoint="BALANCE_SHEET",
-            ticker=ticker,
-            use_vpn=use_vpn,
-            print_return=print_return,
-        )
-
-    def df_cash_flow(
-        self, ticker: str, use_vpn: bool = False, print_return: bool = False
-    ) -> pd.DataFrame:
-        return self.fundamentals_api_call_general_flow(
-            endpoint="CASH_FLOW",
-            ticker=ticker,
-            use_vpn=use_vpn,
-            print_return=print_return,
+            endpoint="CASH_FLOW", ticker=ticker, use_vpn=use_vpn, parse_annual_quarterly=True
         )
