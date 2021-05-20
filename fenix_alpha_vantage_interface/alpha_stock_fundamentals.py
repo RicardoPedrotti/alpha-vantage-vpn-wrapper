@@ -45,7 +45,7 @@ class AlphaStockFundamentals(AlphaData):
     def fundamentals_api_call_general_flow(
         self, endpoint: str, ticker: str, use_vpn: bool, parse_annual_quarterly: bool, suffix='Reports'
     ) -> pd.DataFrame:
-        self.logging_info_start(endpoint=endpoint)
+        self.logging_info_start(endpoint=endpoint, use_vpn=use_vpn)
         call = self.api_mock_call.format(
             endpoint=endpoint, ticker=ticker, api_key=self.get_random_api_key()
         )

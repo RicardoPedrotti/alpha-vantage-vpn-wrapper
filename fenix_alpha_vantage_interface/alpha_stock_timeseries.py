@@ -23,7 +23,7 @@ class AlphaStockTimeSeries(AlphaData):
     ) -> pd.DataFrame:
         endpoint = "TIME_SERIES_INTRADAY"
         possible_intervals = ["1min", "5min", "15min", "30min", "60min"]
-        self.logging_info_start(endpoint=endpoint, intervals=possible_intervals)
+        self.logging_info_start(endpoint=endpoint, intervals=possible_intervals, use_vpn=use_vpn)
         call = (
             self.api_mock_call.format(
                 endpoint=endpoint, ticker=ticker, api_key=self.get_random_api_key()
@@ -50,7 +50,7 @@ class AlphaStockTimeSeries(AlphaData):
             )
             raise ValueError
         else:
-            self.logging_info_start(endpoint=endpoint, intervals=possible_intervals)
+            self.logging_info_start(endpoint=endpoint, intervals=possible_intervals, use_vpn=use_vpn)
             api_calls = [
                 self.api_mock_call.format(
                     endpoint=endpoint, ticker=ticker, api_key=self.get_random_api_key()
@@ -82,7 +82,7 @@ class AlphaStockTimeSeries(AlphaData):
         else:
             endpoint = "TIME_SERIES_DAILY"
 
-        self.logging_info_start(endpoint=endpoint)
+        self.logging_info_start(endpoint=endpoint, use_vpn=use_vpn)
         call = (
             self.api_mock_call.format(
                 endpoint=endpoint, ticker=ticker, api_key=self.get_random_api_key()
@@ -104,7 +104,7 @@ class AlphaStockTimeSeries(AlphaData):
         else:
             endpoint = "TIME_SERIES_WEEKLY"
 
-        self.logging_info_start(endpoint=endpoint)
+        self.logging_info_start(endpoint=endpoint, use_vpn=use_vpn)
         call = (
             self.api_mock_call.format(
                 endpoint=endpoint, ticker=ticker, api_key=self.get_random_api_key()
@@ -126,7 +126,7 @@ class AlphaStockTimeSeries(AlphaData):
         else:
             endpoint = "TIME_SERIES_MONTHLY"
 
-        self.logging_info_start(endpoint=endpoint)
+        self.logging_info_start(endpoint=endpoint, use_vpn=use_vpn)
         call = (
             self.api_mock_call.format(
                 endpoint=endpoint, ticker=ticker, api_key=self.get_random_api_key()
@@ -144,7 +144,7 @@ class AlphaStockTimeSeries(AlphaData):
     ) -> pd.DataFrame:
         endpoint = "GLOBAL_QUOTE"
 
-        self.logging_info_start(endpoint=endpoint)
+        self.logging_info_start(endpoint=endpoint, use_vpn=use_vpn)
         call = (
             self.api_mock_call.format(
                 endpoint=endpoint, ticker=ticker, api_key=self.get_random_api_key()
