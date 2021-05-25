@@ -23,7 +23,7 @@ class AlphaData:
 
     def get_random_api_key(self):
         api_key = self.api_keys[random.randrange(len(self.api_keys))]
-        logging.info(f'Using API Key {api_key}')
+        logging.debug(f"Using API Key {api_key}")
         return api_key
 
     def get_call_api(self, url, use_vpn=False):
