@@ -9,6 +9,7 @@ import yaml
 import requests
 import pandas as pd
 import random
+from decimal import Decimal
 
 
 class AlphaData:
@@ -56,9 +57,11 @@ class AlphaData:
         return responses
 
     @staticmethod
-    def response_csv_to_pandas_handling(response):
+    def response_csv_to_pandas_handling(response, converters):
         if response.status_code == 200:
-            pandas_df = pd.read_csv(StringIO(response.text))
+            pandas_df = pd.read_csv(
+                filepath_or_buffer=StringIO(response.text), converters=converters
+            )
             if pandas_df.size > 3:
                 return pandas_df
             else:
@@ -110,4 +113,7 @@ class AlphaData:
         print(search_return_df.head(10))
 
 
-
+    @staticmethod
+    def decimal_from_value(value):
+        # https://beepscore.com/website/2018/10/12/using-pandas-with-python-decimal.html
+        return Decimal(value)
