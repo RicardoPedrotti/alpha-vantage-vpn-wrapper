@@ -1,5 +1,6 @@
+import concurrent
 import logging
-from typing import List
+from typing import Callable, List
 import pandas as pd
 from fenix_alpha_vantage_interface.alpha_data import AlphaData
 
@@ -83,7 +84,7 @@ class AlphaStockTimeSeries(AlphaData):
                 for month in range(12)
                 for year in range(year_range)
             ]
-            api_responses = list(self.futures_api_calls(api_calls, use_vpn))
+            api_responses = list(self.futures_api_calls(request_list=api_calls, use_vpn=use_vpn))
             aggregated_df = pd.concat(
                 [
                     self.response_csv_to_pandas_handling(response=response, converters=converters, column_renaming_map=column_renaming_map)
@@ -228,3 +229,9 @@ class AlphaStockTimeSeries(AlphaData):
         return self.response_csv_to_pandas_handling(
             self.get_call_api(call, use_vpn=use_vpn), converters=None
         )
+
+    # def process_multiple_tickers(self, endpoint_method: Callable, tickers_list: list, *args):
+    #     def futures_api_calls(self, request_list: List[str], use_vpn: bool):
+    #         with concurrent.futures.ProcessPoolExecutor() as executor:
+    #             responses = executor.map(endpoint_method, tickers_list,     repeat(use_vpn))
+    #         return responses

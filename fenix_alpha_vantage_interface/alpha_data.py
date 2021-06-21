@@ -49,7 +49,7 @@ class AlphaData:
                 f"/n Message from Alpha Vantage: /n{str(response.text)}"
             )
 
-    def futures_api_calls(self, request_list: List, use_vpn: bool):
+    def futures_api_calls(self, request_list: List[str], use_vpn: bool):
         """
         Receives a list of API calls to request simultaneously using the number of cores in the computer minus one
         and returns the api's responses
