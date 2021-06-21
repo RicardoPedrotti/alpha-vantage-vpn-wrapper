@@ -13,7 +13,7 @@ from decimal import Decimal
 
 
 class AlphaData:
-    def __init__(self, config_file_path="fenix_alpha_vantage_interface/config.yml"):
+    def __init__(self, config_file_path="fenix_alpha_vantage_interface/config.yml", log_level="INFO"):
         self.alpha_api_url = "https://www.alphavantage.co/query?"
         try:
             self.configs = config = yaml.safe_load(open(config_file_path))
@@ -21,6 +21,8 @@ class AlphaData:
             self.configs = config = yaml.safe_load(open(f"../{config_file_path}"))
         self.api_keys = config.get("alpha_vantage_api_key_list")
         self.proxies = config.get("vpn_proxies")
+        self.class_logger = logging.getLogger(self.__class__.__name__)
+        self.class_logger.setLevel(log_level)
 
     def get_random_api_key(self):
         api_key = self.api_keys[random.randrange(len(self.api_keys))]
@@ -84,24 +86,24 @@ class AlphaData:
         intervals: List = None,
         additional_logging_on_start: str = "",
     ):
-        logging.info(f"Starting API Interface with Endpoint: {endpoint}")
+        logging.debug(f"Starting API Interface with Endpoint: {endpoint}")
         if use_vpn is True:
-            logging.info(
+            logging.debug(
                 "Using VPN to call Alpha Vantage! Be aware that this is a 3rd party service which"
                 " can malfunction sometimes due to connection timeout. If it does, try your command again."
             )
         else:
-            logging.info(
+            logging.debug(
                 "Beware! Not using VPN to call Alpha Vantage! This way, even when using different API keys"
                 " they know who is sending the request! ;D"
             )
         if intervals is not None:
-            logging.info(
+            logging.debug(
                 f"Optional intervals between the Data Points for this API are: {str(intervals)}."
                 f" If not set, uses standard value."
             )
         if additional_logging_on_start != "":
-            logging.info(additional_logging_on_start)
+            logging.debug(additional_logging_on_start)
 
     def search_endpoint(
         self, what_to_search: str, use_vpn: bool = False

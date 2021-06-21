@@ -5,9 +5,6 @@ from fenix_alpha_vantage_interface.alpha_data import AlphaData
 
 
 class AlphaStockTimeSeries(AlphaData):
-    logger = logging.getLogger()
-    logger.setLevel("INFO")
-
     def __init__(self):
         super().__init__(config_file_path="fenix_alpha_vantage_interface/config.yml")
         self.api_mock_call = (
