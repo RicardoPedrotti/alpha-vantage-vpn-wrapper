@@ -57,12 +57,14 @@ class AlphaData:
         return responses
 
     @staticmethod
-    def response_csv_to_pandas_handling(response, converters):
+    def response_csv_to_pandas_handling(response, converters, column_renaming_map=None):
         if response.status_code == 200:
             pandas_df = pd.read_csv(
                 filepath_or_buffer=StringIO(response.text), converters=converters
             )
             if pandas_df.size > 3:
+                if column_renaming_map:
+                    pandas_df = pandas_df.rename(mapper=column_renaming_map, axis="columns")
                 return pandas_df
             else:
                 logging.error(
@@ -101,7 +103,9 @@ class AlphaData:
         if additional_logging_on_start != "":
             logging.info(additional_logging_on_start)
 
-    def search_endpoint(self, what_to_search: str, use_vpn: bool = False) -> pd.DataFrame:
+    def search_endpoint(
+        self, what_to_search: str, use_vpn: bool = False
+    ) -> pd.DataFrame:
         endpoint = "SYMBOL_SEARCH"
         self.logging_info_start(endpoint=endpoint)
         call = (
@@ -115,7 +119,6 @@ class AlphaData:
         )
         print(f"{search_return_df.shape[0]} Results returned.")
         return search_return_df
-
 
     @staticmethod
     def decimal_from_value(value):
