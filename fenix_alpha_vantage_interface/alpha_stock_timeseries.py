@@ -31,6 +31,7 @@ class AlphaStockTimeSeries(AlphaData):
             "low": self.decimal_from_value,
             "close": self.decimal_from_value,
         }
+        column_renaming_map = {'timestamp': 'date'}
         # Endpoint Configs #
         self.logging_info_start(
             endpoint=endpoint, intervals=possible_intervals, use_vpn=use_vpn
@@ -42,7 +43,7 @@ class AlphaStockTimeSeries(AlphaData):
             + f"&interval={interval}&adjusted={str(adjusted).lower()}&outputsize=full&datatype=csv"
         )
         return self.response_csv_to_pandas_handling(
-            response=self.get_call_api(call, use_vpn=use_vpn), converters=converters
+            response=self.get_call_api(call, use_vpn=use_vpn), converters=converters, column_renaming_map=column_renaming_map
         )
 
     def df_time_series_intraday_extended(
@@ -63,6 +64,7 @@ class AlphaStockTimeSeries(AlphaData):
             "low": self.decimal_from_value,
             "close": self.decimal_from_value,
         }
+        column_renaming_map = {'time': 'date'}
         # Endpoint Configs #
         if year_range > 2:
             logging.error(
@@ -87,7 +89,7 @@ class AlphaStockTimeSeries(AlphaData):
             api_responses = list(self.futures_api_calls(api_calls, use_vpn))
             aggregated_df = pd.concat(
                 [
-                    self.response_csv_to_pandas_handling(response=response, converters=converters)
+                    self.response_csv_to_pandas_handling(response=response, converters=converters, column_renaming_map=column_renaming_map)
                     for response in api_responses
                 ]
             )
@@ -120,6 +122,7 @@ class AlphaStockTimeSeries(AlphaData):
                 "low": self.decimal_from_value,
                 "close": self.decimal_from_value
             }
+        column_renaming_map = {'timestamp': 'date'}
         self.logging_info_start(endpoint=endpoint, use_vpn=use_vpn)
         call = (
             self.api_mock_call.format(
@@ -128,7 +131,7 @@ class AlphaStockTimeSeries(AlphaData):
             + f"&outputsize=full&datatype=csv"
         )
         return self.response_csv_to_pandas_handling(
-            self.get_call_api(call, use_vpn=use_vpn), converters=converters
+            self.get_call_api(call, use_vpn=use_vpn), converters=converters,column_renaming_map=column_renaming_map
         )
 
     def df_time_series_weekly(
@@ -157,6 +160,7 @@ class AlphaStockTimeSeries(AlphaData):
                 "low": self.decimal_from_value,
                 "close": self.decimal_from_value,
             }
+        column_renaming_map = {'timestamp': 'date', 'adjusted close': 'adjusted_close', 'dividend amount': 'dividend_amount'}
 
         self.logging_info_start(endpoint=endpoint, use_vpn=use_vpn)
         call = (
@@ -166,7 +170,7 @@ class AlphaStockTimeSeries(AlphaData):
             + f"&datatype=csv"
         )
         return self.response_csv_to_pandas_handling(
-            self.get_call_api(call, use_vpn=use_vpn), converters=converters
+            self.get_call_api(call, use_vpn=use_vpn), converters=converters, column_renaming_map=column_renaming_map
         )
 
     def df_time_series_monthly(
@@ -195,6 +199,8 @@ class AlphaStockTimeSeries(AlphaData):
                 "low": self.decimal_from_value,
                 "close": self.decimal_from_value
             }
+        column_renaming_map = {'timestamp': 'date', 'adjusted close': 'adjusted_close',
+                               'dividend amount': 'dividend_amount'}
 
 
         self.logging_info_start(endpoint=endpoint, use_vpn=use_vpn)
@@ -205,7 +211,7 @@ class AlphaStockTimeSeries(AlphaData):
             + f"&datatype=csv"
         )
         return self.response_csv_to_pandas_handling(
-            self.get_call_api(call, use_vpn=use_vpn), converters=converters
+            self.get_call_api(call, use_vpn=use_vpn), converters=converters, column_renaming_map=column_renaming_map
         )
 
     def df_quote_endpoint(
