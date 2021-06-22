@@ -1,3 +1,5 @@
 fenix_alpha_vantage/config.yml
 Pipfile.lock
 spot_testing.py
+/dist/
+/fenix_alpha_vantage.egg-info/
