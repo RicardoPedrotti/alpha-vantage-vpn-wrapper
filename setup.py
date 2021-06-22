@@ -9,7 +9,6 @@ DESCRIPTION = 'Proprietary Fenix package to interact with Alpha Vantage APIs.'
 with open("README.md", "r", encoding="utf-8") as fh:
     LONG_DESCRIPTION = fh.read()
 
-# Setting up
 setup(
     name=NAME,
     version=VERSION,
@@ -29,8 +28,7 @@ setup(
         "notebook = ~=6.4.0",
         "pyyaml = ~=5.4.1",
         "requests = ~=2.25.1",
-    ],  # add any additional packages that
-    # needs to be installed along with your package. Eg: 'caer'
+    ],
     python_requires='>=3',
     keywords=['python', 'alpha vantage', 'fenix'],
 )
