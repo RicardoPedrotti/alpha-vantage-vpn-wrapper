@@ -6,8 +6,8 @@ from fenix_alpha_vantage.alpha_data import AlphaData
 
 
 class AlphaStockTimeSeries(AlphaData):
-    def __init__(self):
-        super().__init__(config_file_path="fenix_alpha_vantage/config.yml")
+    def __init__(self, config_file_path="fenix_alpha_vantage/config.yml"):
+        super().__init__(config_file_path=config_file_path)
         self.api_mock_call = (
             self.alpha_api_url + "function={endpoint}&symbol={ticker}&apikey={api_key}"
         )
