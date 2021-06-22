@@ -2,12 +2,12 @@ import concurrent
 import logging
 from typing import Callable, List
 import pandas as pd
-from fenix_alpha_vantage_interface.alpha_data import AlphaData
+from fenix_alpha_vantage.alpha_data import AlphaData
 
 
 class AlphaStockTimeSeries(AlphaData):
     def __init__(self):
-        super().__init__(config_file_path="fenix_alpha_vantage_interface/config.yml")
+        super().__init__(config_file_path="fenix_alpha_vantage/config.yml")
         self.api_mock_call = (
             self.alpha_api_url + "function={endpoint}&symbol={ticker}&apikey={api_key}"
         )

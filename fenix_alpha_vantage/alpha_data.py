@@ -13,7 +13,7 @@ from decimal import Decimal
 
 
 class AlphaData:
-    def __init__(self, config_file_path="fenix_alpha_vantage_interface/config.yml", log_level="INFO"):
+    def __init__(self, config_file_path="fenix_alpha_vantage/config.yml", log_level="INFO"):
         self.alpha_api_url = "https://www.alphavantage.co/query?"
         try:
             self.configs = config = yaml.safe_load(open(config_file_path))
