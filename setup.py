@@ -1,6 +1,6 @@
 from setuptools import setup, find_packages
 
-VERSION = '1.0.0'
+VERSION = '1.0.1'
 NAME = "fenix_alpha_vantage"
 DESCRIPTION = 'Proprietary Fenix package to interact with Alpha Vantage APIs.'
 
