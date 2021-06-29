@@ -122,7 +122,7 @@ class AlphaData:
         print(f"{search_return_df.shape[0]} Results returned.")
         return search_return_df
 
-    @staticmethod
-    def decimal_from_value(value):
-        # https://beepscore.com/website/2018/10/12/using-pandas-with-python-decimal.html
-        return Decimal(value)
+    # @staticmethod
+    # def decimal_from_value(value):
+    #     # https://beepscore.com/website/2018/10/12/using-pandas-with-python-decimal.html
+    #     return Decimal(value)

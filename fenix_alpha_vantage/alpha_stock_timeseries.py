@@ -24,10 +24,10 @@ class AlphaStockTimeSeries(AlphaData):
         possible_intervals = ["1min", "5min", "15min", "30min", "60min"]
         converters = {
             "timestamp": pd.to_datetime,
-            "open": self.decimal_from_value,
-            "high": self.decimal_from_value,
-            "low": self.decimal_from_value,
-            "close": self.decimal_from_value,
+            "open": pd.to_numeric,
+            "high": pd.to_numeric,
+            "low": pd.to_numeric,
+            "close": pd.to_numeric,
         }
         column_renaming_map = {'timestamp': 'date'}
         # Endpoint Configs #
@@ -57,10 +57,10 @@ class AlphaStockTimeSeries(AlphaData):
         possible_intervals = ["1min", "5min", "15min", "30min", "60min"]
         converters = {
             "time": pd.to_datetime,
-            "open": self.decimal_from_value,
-            "high": self.decimal_from_value,
-            "low": self.decimal_from_value,
-            "close": self.decimal_from_value,
+            "open": pd.to_numeric,
+            "high": pd.to_numeric,
+            "low": pd.to_numeric,
+            "close": pd.to_numeric,
         }
         column_renaming_map = {'time': 'date'}
         # Endpoint Configs #
@@ -103,22 +103,22 @@ class AlphaStockTimeSeries(AlphaData):
             endpoint = "TIME_SERIES_DAILY_ADJUSTED"
             converters = {
                 "timestamp": pd.to_datetime,
-                "open": self.decimal_from_value,
-                "high": self.decimal_from_value,
-                "low": self.decimal_from_value,
-                "close": self.decimal_from_value,
-                "adjusted_close": self.decimal_from_value,
-                "dividend_amount": self.decimal_from_value,
-                "split_coefficient": self.decimal_from_value
+                "open": pd.to_numeric,
+                "high": pd.to_numeric,
+                "low": pd.to_numeric,
+                "close": pd.to_numeric,
+                "adjusted_close": pd.to_numeric,
+                "dividend_amount": pd.to_numeric,
+                "split_coefficient": pd.to_numeric
             }
         else:
             endpoint = "TIME_SERIES_DAILY"
             converters = {
                 "timestamp": pd.to_datetime,
-                "open": self.decimal_from_value,
-                "high": self.decimal_from_value,
-                "low": self.decimal_from_value,
-                "close": self.decimal_from_value
+                "open": pd.to_numeric,
+                "high": pd.to_numeric,
+                "low": pd.to_numeric,
+                "close": pd.to_numeric
             }
         column_renaming_map = {'timestamp': 'date'}
         self.logging_info_start(endpoint=endpoint, use_vpn=use_vpn)
@@ -142,21 +142,21 @@ class AlphaStockTimeSeries(AlphaData):
             endpoint = "TIME_SERIES_WEEKLY_ADJUSTED"
             converters = {
                 "timestamp": pd.to_datetime,
-                "open": self.decimal_from_value,
-                "high": self.decimal_from_value,
-                "low": self.decimal_from_value,
-                "close": self.decimal_from_value,
-                "adjusted close": self.decimal_from_value,
-                "dividend amount": self.decimal_from_value
+                "open": pd.to_numeric,
+                "high": pd.to_numeric,
+                "low": pd.to_numeric,
+                "close": pd.to_numeric,
+                "adjusted close": pd.to_numeric,
+                "dividend amount": pd.to_numeric
             }
         else:
             endpoint = "TIME_SERIES_WEEKLY"
             converters = {
                 "timestamp": pd.to_datetime,
-                "open": self.decimal_from_value,
-                "high": self.decimal_from_value,
-                "low": self.decimal_from_value,
-                "close": self.decimal_from_value,
+                "open": pd.to_numeric,
+                "high": pd.to_numeric,
+                "low": pd.to_numeric,
+                "close": pd.to_numeric,
             }
         column_renaming_map = {'timestamp': 'date', 'adjusted close': 'adjusted_close', 'dividend amount': 'dividend_amount'}
 
@@ -181,21 +181,21 @@ class AlphaStockTimeSeries(AlphaData):
             endpoint = "TIME_SERIES_MONTHLY_ADJUSTED"
             converters = {
                 "timestamp": pd.to_datetime,
-                "open": self.decimal_from_value,
-                "high": self.decimal_from_value,
-                "low": self.decimal_from_value,
-                "close": self.decimal_from_value,
-                "adjusted close": self.decimal_from_value,
-                "dividend amount": self.decimal_from_value
+                "open": pd.to_numeric,
+                "high": pd.to_numeric,
+                "low": pd.to_numeric,
+                "close": pd.to_numeric,
+                "adjusted close": pd.to_numeric,
+                "dividend amount": pd.to_numeric
             }
         else:
             endpoint = "TIME_SERIES_MONTHLY"
             converters = {
                 "timestamp": pd.to_datetime,
-                "open": self.decimal_from_value,
-                "high": self.decimal_from_value,
-                "low": self.decimal_from_value,
-                "close": self.decimal_from_value
+                "open": pd.to_numeric,
+                "high": pd.to_numeric,
+                "low": pd.to_numeric,
+                "close": pd.to_numeric
             }
         column_renaming_map = {'timestamp': 'date', 'adjusted close': 'adjusted_close',
                                'dividend amount': 'dividend_amount'}
