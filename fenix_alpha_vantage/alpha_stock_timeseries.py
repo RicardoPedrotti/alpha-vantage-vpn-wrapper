@@ -16,6 +16,7 @@ class AlphaStockTimeSeries(AlphaData):
         self,
         ticker: str,
         interval: str = "60min",
+        adjusted: str = True,
         use_vpn: bool = False,
     ) -> pd.DataFrame:
         # Endpoint Configs
@@ -37,12 +38,10 @@ class AlphaStockTimeSeries(AlphaData):
             self.api_mock_call.format(
                 endpoint=endpoint, ticker=ticker, api_key=self.get_random_api_key()
             )
-            + f"&interval={interval}"
-              f"&outputsize=full&datatype=csv"
+            + f"&interval={interval}&adjusted={str(adjusted).lower()}&outputsize=full&datatype=csv"
         )
         return self.response_csv_to_pandas_handling(
-            response=self.get_call_api(call, use_vpn=use_vpn),
-            converters=converters, column_renaming_map=column_renaming_map
+            response=self.get_call_api(call, use_vpn=use_vpn), converters=converters, column_renaming_map=column_renaming_map
         )
 
     def df_time_series_intraday_extended(
