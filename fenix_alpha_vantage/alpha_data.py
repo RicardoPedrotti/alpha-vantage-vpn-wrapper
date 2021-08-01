@@ -4,16 +4,18 @@ import concurrent.futures
 from io import StringIO
 from itertools import repeat
 from typing import List
+from time import sleep
 
 import yaml
 import requests
 import pandas as pd
 import random
-from decimal import Decimal
 
 
 class AlphaData:
-    def __init__(self, config_file_path="fenix_alpha_vantage/config.yml", log_level="INFO"):
+    def __init__(
+        self, config_file_path="fenix_alpha_vantage/config.yml", log_level="INFO"
+    ):
         self.alpha_api_url = "https://www.alphavantage.co/query?"
         try:
             self.configs = config = yaml.safe_load(open(config_file_path))
@@ -22,11 +24,11 @@ class AlphaData:
         self.api_keys = config.get("alpha_vantage_api_key_list")
         self.proxies = config.get("vpn_proxies")
         self.class_logger = logging.getLogger(self.__class__.__name__)
-        self.class_logger.setLevel(log_level)
+        self.class_logger.setLevel(level=log_level)
 
     def get_random_api_key(self):
         api_key = self.api_keys[random.randrange(len(self.api_keys))]
-        logging.debug(f"Using API Key {api_key}")
+        self.class_logger.debug(f"Using API Key {api_key}")
         return api_key
 
     def get_call_api(self, url, use_vpn=False):
@@ -58,52 +60,53 @@ class AlphaData:
             responses = executor.map(self.get_call_api, request_list, repeat(use_vpn))
         return responses
 
-    @staticmethod
-    def response_csv_to_pandas_handling(response, converters, column_renaming_map=None):
+    def response_csv_to_pandas_handling(self, response, converters, column_renaming_map=None):
         if response.status_code == 200:
             pandas_df = pd.read_csv(
                 filepath_or_buffer=StringIO(response.text), converters=converters
             )
             if pandas_df.size > 3:
                 if column_renaming_map:
-                    pandas_df = pandas_df.rename(mapper=column_renaming_map, axis="columns")
+                    pandas_df = pandas_df.rename(
+                        mapper=column_renaming_map, axis="columns"
+                    )
                 return pandas_df
             else:
-                logging.error(
+                self.class_logger.error(
                     f"Well, apparently the call {response.url} returned an empty Dataframe"
                 )
-                logging.error(
-                    f"Could be a bug, but first please check your arguments and try again. If exceeded the number of API calls, try using VPN."
+                self.class_logger.error(
+                    f"Could be a bug, but first please check your arguments and try again. "
+                    f"If exceeded the number of API calls, try using VPN."
                     f" Below is the returned information from Alpha vantage: "
                 )
-                logging.error(response.text)
-                raise ValueError
+                self.class_logger.error(response.text)
 
-    @staticmethod
     def logging_info_start(
+        self,
         endpoint: str,
         use_vpn: bool = False,
         intervals: List = None,
         additional_logging_on_start: str = "",
     ):
-        logging.debug(f"Starting API Interface with Endpoint: {endpoint}")
+        self.class_logger.debug(f"Starting API Interface with Endpoint: {endpoint}")
         if use_vpn is True:
-            logging.debug(
+            self.class_logger.debug(
                 "Using VPN to call Alpha Vantage! Be aware that this is a 3rd party service which"
                 " can malfunction sometimes due to connection timeout. If it does, try your command again."
             )
         else:
-            logging.debug(
+            self.class_logger.debug(
                 "Beware! Not using VPN to call Alpha Vantage! This way, even when using different API keys"
                 " they know who is sending the request! ;D"
             )
         if intervals is not None:
-            logging.debug(
+            self.class_logger.debug(
                 f"Optional intervals between the Data Points for this API are: {str(intervals)}."
                 f" If not set, uses standard value."
             )
         if additional_logging_on_start != "":
-            logging.debug(additional_logging_on_start)
+            self.class_logger.debug(additional_logging_on_start)
 
     def search_endpoint(
         self, what_to_search: str, use_vpn: bool = False

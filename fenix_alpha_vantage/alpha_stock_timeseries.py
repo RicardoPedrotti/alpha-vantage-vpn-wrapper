@@ -6,11 +6,13 @@ from fenix_alpha_vantage.alpha_data import AlphaData
 
 
 class AlphaStockTimeSeries(AlphaData):
-    def __init__(self, config_file_path="fenix_alpha_vantage/config.yml"):
-        super().__init__(config_file_path=config_file_path)
+    def __init__(self, config_file_path="fenix_alpha_vantage/config.yml", log_level='INFO'):
+        super().__init__(config_file_path=config_file_path, log_level=log_level)
         self.api_mock_call = (
             self.alpha_api_url + "function={endpoint}&symbol={ticker}&apikey={api_key}"
         )
+        self.class_logger = logging.getLogger(self.__class__.__name__)
+        self.class_logger.setLevel(level=log_level)
 
     def df_time_series_intraday(
         self,
@@ -65,7 +67,7 @@ class AlphaStockTimeSeries(AlphaData):
         column_renaming_map = {'time': 'date'}
         # Endpoint Configs #
         if year_range > 2:
-            logging.error(
+            self.class_logger.error(
                 'By limitations of the API, the maximum value for the param "year_range" is 2'
             )
             raise ValueError

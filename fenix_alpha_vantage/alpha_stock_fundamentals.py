@@ -7,14 +7,15 @@ class AlphaStockFundamentals(AlphaData):
     logger = logging.getLogger()
     logger.setLevel("INFO")
 
-    def __init__(self, config_file_path="fenix_alpha_vantage/config.yml"):
+    def __init__(self, config_file_path="fenix_alpha_vantage/config.yml", log_level='INFO'):
         super().__init__(config_file_path=config_file_path)
         self.api_mock_call = (
             self.alpha_api_url + "function={endpoint}&symbol={ticker}&apikey={api_key}"
         )
+        self.class_logger = logging.getLogger(self.__class__.__name__)
+        self.class_logger.setLevel(level=log_level)
 
-    @staticmethod
-    def annual_quarterly_fundamentals_response_json_to_pandas_handling(api_response, suffix):
+    def annual_quarterly_fundamentals_response_json_to_pandas_handling(self, api_response, suffix):
         if api_response.status_code == 200:
             pandas_df = pd.DataFrame.from_dict(api_response.json(), orient="index")
             annual_reports_df = (
@@ -30,16 +31,15 @@ class AlphaStockFundamentals(AlphaData):
             aggregated_df = pd.concat([annual_reports_df, quarterly_reports_df])
             return aggregated_df
         else:
-            logging.error(api_response.text)
+            self.class_logger.error(api_response.text)
             raise ValueError
 
-    @staticmethod
-    def fundamentals_response_json_to_pandas_handling(api_response):
+    def fundamentals_response_json_to_pandas_handling(self, api_response):
         if api_response.status_code == 200:
             pandas_df = pd.DataFrame.from_dict(api_response.json(), orient="index")
             return pandas_df
         else:
-            logging.error(api_response.text)
+            self.class_logger.error(api_response.text)
             raise ValueError
 
     def fundamentals_api_call_general_flow(
