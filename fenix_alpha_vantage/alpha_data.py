@@ -31,25 +31,34 @@ class AlphaData:
         self.class_logger.debug(f"Using API Key {api_key}")
         return api_key
 
-    def get_call_api(self, url, use_vpn=False):
+    def get_call_api(
+        self, url, use_vpn=False, tries=10, delay=3, max_delay=20, backoff=2
+    ):
         """
-        Calls a simple get api using proxies when applied
-        :param url: api url to call
-        :param use_vpn: Define whether the call should use the VPN or not
-        :return: api response
+        Calls a simple get api using proxies when applied with some retries
         """
-        if use_vpn is True:
-            response = requests.request("GET", url, proxies=self.proxies)
-        else:
-            response = requests.request("GET", url)
-
-        if response.status_code == 200:
-            return response
-        else:
-            logging.error(
-                f"ERROR! Status code for the error: {str(response.status_code)}"
-                f"/n Message from Alpha Vantage: /n{str(response.text)}"
-            )
+        current_try = 0
+        while current_try < tries:
+            self.class_logger.info(f'Try number {str(current_try+1)} on call {url}')
+            if use_vpn is True:
+                response = requests.request("GET", url, proxies=self.proxies)
+            else:
+                response = requests.request("GET", url)
+            if response.status_code == 200 and "Invalid API call." not in response.text:
+                return response
+            else:
+                self.class_logger.error(
+                    f"ERROR! Status code for the error: {str(response.status_code)}"
+                    f"\nMessage from Alpha Vantage: {str(response.text)}"
+                )
+                current_retry_delay = (
+                    max_delay
+                    if delay + (backoff * current_try) > max_delay
+                    else delay + (backoff * current_try)
+                )
+                self.class_logger.info(f'Waiting {str(current_retry_delay)} seconds to make a new request.')
+                sleep(current_retry_delay)
+                current_try += 1
 
     def futures_api_calls(self, request_list: List[str], use_vpn: bool):
         """
