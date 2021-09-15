@@ -17,12 +17,15 @@ class AlphaData:
         self, config_file_path="fenix_alpha_vantage/config.yml", log_level="INFO"
     ):
         self.alpha_api_url = "https://www.alphavantage.co/query?"
-        try:
-            self.configs = config = yaml.safe_load(open(config_file_path))
-        except FileNotFoundError:
-            self.configs = config = yaml.safe_load(open(f"../{config_file_path}"))
-        self.api_keys = config.get("alpha_vantage_api_key_list")
-        self.proxies = config.get("vpn_proxies")
+        if type(config_file_path) == bytes:
+            self.configs = yaml.safe_load(config_file_path)
+        elif type(config_file_path) == str:
+            try:
+                self.configs = yaml.safe_load(open(config_file_path))
+            except FileNotFoundError:
+                self.configs = yaml.safe_load(open(f"../{config_file_path}"))
+        self.api_keys = self.configs.get("alpha_vantage_api_key_list")
+        self.proxies = self.configs.get("vpn_proxies")
         self.class_logger = logging.getLogger(self.__class__.__name__)
         self.class_logger.setLevel(level=log_level)
 
