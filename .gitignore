@@ -1,5 +1,5 @@
-fenix_alpha_vantage/config.yml
+alpha_vantage_vpn_wrapper/config.yml
 Pipfile.lock
 spot_testing.py
 /dist/
-/fenix_alpha_vantage.egg-info/
+/alpha_vantage_vpn_wrapper.egg-info/

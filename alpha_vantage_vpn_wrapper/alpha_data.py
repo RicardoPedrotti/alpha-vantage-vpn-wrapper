@@ -14,7 +14,7 @@ import random
 
 class AlphaData:
     def __init__(
-        self, config_file_path="fenix_alpha_vantage/config.yml", log_level="INFO"
+        self, config_file_path="alpha_vantage_vpn_wrapper/config.yml", log_level="INFO"
     ):
         self.alpha_api_url = "https://www.alphavantage.co/query?"
         if type(config_file_path) == bytes:

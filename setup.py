@@ -1,8 +1,8 @@
 from setuptools import setup, find_packages
 
 VERSION = '1.1.1'
-NAME = "fenix_alpha_vantage"
-DESCRIPTION = 'Proprietary Fenix package to interact with Alpha Vantage APIs.'
+NAME = "alpha_vantage_vpn_wrapper"
+DESCRIPTION = 'Proprietary package to interact with Alpha Vantage APIs.'
 
 with open("README.md", "r", encoding="utf-8") as fh:
     LONG_DESCRIPTION = fh.read()
@@ -21,5 +21,5 @@ setup(
         "requests >= 2.25.1",
     ],
     python_requires='>=3',
-    keywords=['python', 'alpha vantage', 'fenix'],
+    keywords=['python', 'alpha vantage', 'wrapper'],
 )
