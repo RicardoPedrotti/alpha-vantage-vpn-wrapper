@@ -1,4 +1,4 @@
-# Fenix Alpha Vantage Wrapper
+# Alpha Vantage VPN Wrapper
 
 The intention of this wrapper is to bypass some Alpha Vantage API limitations and make it easier to manipulate 
 data from the endpoints.

@@ -2,11 +2,11 @@ import concurrent
 import logging
 from typing import Callable, List
 import pandas as pd
-from fenix_alpha_vantage.alpha_data import AlphaData
+from alpha_vantage_vpn_wrapper.alpha_data import AlphaData
 
 
 class AlphaStockTimeSeries(AlphaData):
-    def __init__(self, config_file_path="fenix_alpha_vantage/config.yml", log_level='INFO'):
+    def __init__(self, config_file_path="alpha_vantage_vpn_wrapper/config.yml", log_level='INFO'):
         super().__init__(config_file_path=config_file_path, log_level=log_level)
         self.api_mock_call = (
             self.alpha_api_url + "function={endpoint}&symbol={ticker}&apikey={api_key}"
